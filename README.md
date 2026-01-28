@@ -57,7 +57,7 @@ If you need any support, please join [our Discord server](https://discord.gg/BgG
 <h2 align="left">Features</h2>
 
 * [x] Supports Infinite Accounts </br>
-* [x] Hint (Default) + AI-Powered Catching with 99.7%+ Accuracy </br>
+* [x] Hint (Default) + AI-Powered Catching (Paid) </br>
 * [x] Automated Captcha Solving </br>
 * [x] Can catch EVERY pokemon (All gen + New forms) </br>
 * [x] Interactive Commands </br>
@@ -137,11 +137,13 @@ npm install
     1. Go to Discord Developer Portal
     2. Create a New Application
     3. Navigate to the Bot tab
-    4. Click "Add Bot" and copy the token
+    4. Click "Reset Token" and copy the token
     5. Under Privileged Gateway Intents, enable these 3 intents:
        - Presence Intent
        - Server Members Intent
        - Message Content Intent
+    6. Copy your Discord Bot ID , and place it in "https://discord.com/oauth2/authorize?client_id=DISCORD_BOT_ID&permissions=8&integration_type=0&scope=bot" 
+    7. Then use this link to add your Discord Bot in your Private Server(s).
   - **Owners**: Add your Discord User ID to control bot commands
   - **Prefix**: Set your desired command prefix (default is '!')
 
