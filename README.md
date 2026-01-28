@@ -150,7 +150,7 @@ npm install
 To start the autocatcher, run the following command:
 
 ```javascript
-node .
+node index.js
 ```
 
 ### Adding Autocatcher Tokens
