@@ -32,7 +32,6 @@ Zeta v1.3 - Advanced Pokétwo Autocatcher with AI Integration & Captcha Solving
 <p align="center">
   <a href="https://discord.gg/BgGmu4RgUJ"><img src="https://img.shields.io/discord/1133853334944632832?label=Discord&logo=discord&logoColor=white&style=for-the-badge" alt="Discord"></a>
   <a href="https://github.com/momento00/poketwo-autocatcher/stargazers"><img src="https://img.shields.io/github/stars/momento00/poketwo-autocatcher?style=for-the-badge&logo=github&color=blue" alt="Stars"></a>
-  <a href="https://github.com/momento00/poketwo-autocatcher/releases"><img src="https://img.shields.io/github/v/release/momento00/poketwo-autocatcher?style=for-the-badge&logo=github" alt="Stable Release"></a>
   <a href="https://www.nodejs.org/"><img src="https://img.shields.io/badge/node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white" alt="made-with-nodejs"></a>
 </p>
 
@@ -53,14 +52,14 @@ Zeta v1.3 is an advanced open-source Pokétwo autocatcher featuring AI-powered c
 
 <h2 align="left">Support</h2>
 
-If you need any support, please join [our Discord server](https://discord.gg/BgGmu4RgUJ): https://discord.gg/BgGmu4RgUJ
+If you need any support, please join [our Discord server](https://discord.gg/BgGmu4RgUJ)
 
 <h2 align="left">Features</h2>
 
 * [x] Supports Infinite Accounts </br>
-* [x] Hint + AI-Powered Catching </br>
+* [x] Hint (Default) + AI-Powered Catching with 99.7%+ Accuracy </br>
 * [x] Automated Captcha Solving </br>
-* [x] Can catch EVERY pokemon (Gen 9 & All Event Pokémon included!) </br>
+* [x] Can catch EVERY pokemon (All gen + New forms) </br>
 * [x] Interactive Commands </br>
 * [x] Useful Webhook Logging </br>
 * [x] Comprehensive Stats Tracking </br>
@@ -83,7 +82,7 @@ Zeta v1.3 is fully open-source and free to use! We only charge for premium servi
 
 | Name  | Type | Default Value | Description |
 | ------------- | ------------- | ------------- | ------------- |
-| ```botToken```  | ```String``` | ```undefined```  | Your bot token for authentication. |
+| ```botToken```  | ```String``` | ```undefined```  | Your Discord bot token from https://discord.com/developers/applications. |
 | ```prefix```  | ```String``` | ```!```  | The prefix to use for commands. |
 | ```owners```  | ```Array``` | ```[]```  | The user IDs of accounts that can control the bot. |
 | ```captchaHook```  | ```String``` | ```undefined```  | Webhook URL for captcha logging. |
@@ -133,7 +132,18 @@ cd poketwo-autocatcher
 npm install
 ```
 
-- Configure your settings in [config.js](./config.js).
+- **Configure your settings in [config.js](./config.js)**:
+  - **Discord Bot Token**: Obtain from https://discord.com/developers/applications
+    1. Go to Discord Developer Portal
+    2. Create a New Application
+    3. Navigate to the Bot tab
+    4. Click "Add Bot" and copy the token
+    5. Under Privileged Gateway Intents, enable these 3 intents:
+       - Presence Intent
+       - Server Members Intent
+       - Message Content Intent
+  - **Owners**: Add your Discord User ID to control bot commands
+  - **Prefix**: Set your desired command prefix (default is '!')
 
 To start the autocatcher, run the following command:
 
@@ -141,22 +151,29 @@ To start the autocatcher, run the following command:
 node .
 ```
 
-### Token Format
+### Adding Autocatcher Tokens
 
-Add your tokens to the `data/tokens.json` file as an array:
+- **Method 1 (Recommended)**: Use the in-app token manager
+  1. Start the bot
+  2. Run the `!stats` command
+  3. Click the "Add Token" button to add new tokens
+  4. Use the "Remove Token" button to remove tokens
+
+- **Method 2**: Edit the `data/tokens.json` file directly
 
 ```json
 [
-  "YOUR_TOKEN_HERE",
-  "ANOTHER_TOKEN_HERE"
+  "YOUR_SELFBOT_TOKEN_HERE",
+  "ANOTHER_SELFBOT_TOKEN_HERE"
 ]
 ```
 
 ### Important
 
 * For the best experience, ensure your Discord account has proper permissions in the channels where catching occurs.
-* Captcha solving requires a valid API key from [GraceShop](https://graceshop.mysellauth.com).
+* Captcha solving requires a valid API key you can buy from [GraceShop](https://graceshop.mysellauth.com).
 * AI catching requires a license key obtained by contacting `momento.de`.
+* Make sure to add your Discord User ID to the `owners` array in config.js to control the bot commands.
 
 ## Contributing
 
