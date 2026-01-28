@@ -158,7 +158,7 @@ node index.js
 - **Method 1 (Recommended)**: Use the in-app token manager
   1. Start the bot
   2. Run the `!stats` command
-  3. Click the "Add Token" button to add new tokens
+  3. Click the "Add Token" button to add new tokens (Support Mass adding)
   4. Use the "Remove Token" button to remove tokens
 
 - **Method 2**: Edit the `data/tokens.json` file directly
