@@ -15,11 +15,10 @@ module.exports = {
   aiLicenseKey: "AI_API_KEY",
   aiCatch: false,
     
-  // Captcha key
-  // Buy Captcha Solves from https://graceshop.mysellauth.com/
+  // Captcha Key, Buy Captcha Solves from https://graceshop.mysellauth.com/
   captchaApiKey: "CAPTCHA_API_KEY",
   
-  waitAfterCaptcha: 5000,
+  waitAfterCaptcha: 60000,
   waitAfterSpawn: 1500,
   
   blacklistedServers: ["716390832034414685", "serverid2"] 
