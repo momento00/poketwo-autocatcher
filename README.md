@@ -93,7 +93,7 @@ Zeta v1.3 is fully open-source and free to use! We only charge for premium servi
 | ```aiHostname```  | ```String``` | ```undefined```  | Hostname for AI catching service. |
 | ```aiLicenseKey```  | ```String``` | ```undefined```  | License key for AI catching. |
 | ```captchaApiKey```  | ```String``` | ```undefined```  | API key for captcha solving service. |
-| ```waitAfterCaptcha```  | ```Number``` | ```5000```  | Time to wait after captcha (in ms). |
+| ```waitAfterCaptcha```  | ```Number``` | ```60000```  | Time to wait after captcha (in ms). |
 | ```waitAfterSpawn```  | ```Number``` | ```1500```  | Time to wait after spawn (in ms). |
 | ```blacklistedServers```  | ```Array``` | ```["716390832034414685"]```  | Server IDs to exclude from catching. |
 
