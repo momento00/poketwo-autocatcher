@@ -76,6 +76,7 @@ If you need any support, please join [our Discord server](https://discord.gg/BgG
 
 Zeta v1.3 is fully open-source and free to use! We only charge for premium services:
 * **Captcha Solves**: Available at [GraceShop](https://graceshop.mysellauth.com)
+    - Get Free 100 Solves by giving a Star to our Zeta ( Create A ticket in Support Server to claim)
 * **AI Catching**: Available by contacting `momento.de` (99.7%+ accuracy including new forms)
 
 <h2 align="left">Configurations</h2>
