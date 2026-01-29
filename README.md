@@ -21,7 +21,7 @@
 <!-- Badges (Top) -->
 
 <p align="center">
-  <a href="https://github.com/momento00/poketwo-autocatcher"><img width="200px" src="https://cdn.discordapp.com/attachments/1457742565704208446/1466448180794364024/logo.png?ex=697cc7cb&is=697b764b&hm=ebfbb82bae94c5d9b78a975c4b60951916020262a9a1fc86ad4d40ff8418099d" alt="Zeta Logo"></a>
+  <a href="https://github.com/momento00/poketwo-autocatcher"><img width="200px" src="https://cdn.discordapp.com/attachments/1462107266659516610/1466465747701207080/mainlogo.png?ex=697cd827&is=697b86a7&hm=fdca5850c29d20e18d02892b9cdf87341d5fb0fb9e930d39f5c42e75199db552" alt="Zeta Logo"></a>
   <h1 align="center">Zeta v1.3</h1>
 </p>
 
@@ -44,7 +44,7 @@ Zeta v1.3 - Advanced Pokétwo Autocatcher with AI Integration & Captcha Solving
   <i>The Advanced, Open-Source Autocatcher with AI Integration & Captcha Solving</i>
 </p>
 
-<img src="https://poketwo.net/_next/image?url=%2Fassets%2Flogo.png&w=256&q=75" alt="poketwo logo" align="right" height="120px">
+<img src="https://cdn.discordapp.com/attachments/1462107266659516610/1466465747701207080/mainlogo.png?ex=697cd827&is=697b86a7&hm=fdca5850c29d20e18d02892b9cdf87341d5fb0fb9e930d39f5c42e75199db552" alt="poketwo logo" align="right" height="120px">
 
 <h2>About</h2>
 
