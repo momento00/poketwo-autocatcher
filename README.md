@@ -21,7 +21,7 @@
 <!-- Badges (Top) -->
 
 <p align="center">
-  <a href="https://github.com/momento00/poketwo-autocatcher"><img width="200px" src="https://i.imgur.com/85PNo2N.png" alt="Zeta Logo"></a>
+  <a href="https://github.com/momento00/poketwo-autocatcher"><img width="200px" src="https://cdn.discordapp.com/attachments/1457742565704208446/1466448180794364024/logo.png?ex=697cc7cb&is=697b764b&hm=ebfbb82bae94c5d9b78a975c4b60951916020262a9a1fc86ad4d40ff8418099d" alt="Zeta Logo"></a>
   <h1 align="center">Zeta v1.3</h1>
 </p>
 
