@@ -74,7 +74,7 @@ If you need any support, please join [our Discord server](https://discord.gg/BgG
 
 <h2 align="left">Pricing</h2>
 
-Zeta v1.3 is fully open-source and free to use! We only charge for premium services:
+Zeta v1.3 is fully open-source and free to use! We only charge for Fully Automatic Captcha Solving and AI Catching where Free is not Currently Possible, It is just an Optional thing you can add on this Zeta Catcher:
 * **Captcha Solves**: Available at [GraceShop](https://graceshop.mysellauth.com)
     - Get Free 100 Solves by giving a Star to our Zeta ( Create A ticket in Support Server to claim)
 * **AI Catching**: Available by contacting `momento.de` (99.7%+ accuracy including new forms)
