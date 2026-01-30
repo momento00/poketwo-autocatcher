@@ -134,13 +134,11 @@ function commatize(number) {
   return formattedNumber;
 }
 
-// Hide last 4 digits of username for privacy
 function hideUsername(username) {
   if (!username || username.length <= 4) return username;
   return username.slice(0, -4) + '****';
 }
 
-// Enhanced rare logs embed creator
 function createRareLogEmbed(caught, loggable, clientUser, messageUrl, image) {
   const rarityColors = {
     'Legendary': '#FF4500',
@@ -166,7 +164,6 @@ function createRareLogEmbed(caught, loggable, clientUser, messageUrl, image) {
   const color = rarityColors[primaryRarity] || '#808080';
   const icon = rarityIcons[primaryRarity] || '❓';
   
-  // Hide last 4 digits of username
   const hiddenUsername = hideUsername(clientUser.username);
   
   const embed = new EmbedBuilder()
@@ -215,7 +212,6 @@ function createRareLogEmbed(caught, loggable, clientUser, messageUrl, image) {
   return embed;
 }
 
-// Enhanced help command embed
 function createHelpEmbed(prefix, botUser) {
   const embed = new EmbedBuilder()
     .setTitle('🤖 Zeta AutoCatcher v1.3')
