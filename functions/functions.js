@@ -194,7 +194,7 @@ async function statMsg(message, page = 0) {
 
   if (autocatchers.length === 0) {
     const embed = new EmbedBuilder()
-      .setTitle("Trident Catcher Stats")
+      .setTitle("Zeta Catcher Stats")
       .setDescription("*No catcher connected yet.*")
       .setColor("DarkButNotBlack")
       .setFooter({
