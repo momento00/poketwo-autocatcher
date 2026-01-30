@@ -89,7 +89,7 @@ Zeta v1.3 is fully open-source and free to use! We only charge for premium servi
 | ```captchaHook```  | ```String``` | ```undefined```  | Webhook URL for captcha logging. |
 | ```logHook```  | ```String``` | ```undefined```  | Webhook URL for general logging. |
 | ```logs```  | ```Object``` | ```{HighLowIVs: true, Quests: true, Rare: true, Shiny: true}```  | Configuration for different log types. |
-| ```aiCatch```  | ```Boolean``` | ```true```  | Enable/disable AI catching feature. |
+| ```aiCatch```  | ```Boolean``` | ```false```  | Enable/disable AI catching feature. |
 | ```aiHostname```  | ```String``` | ```undefined```  | Hostname for AI catching service. |
 | ```aiLicenseKey```  | ```String``` | ```undefined```  | License key for AI catching. |
 | ```captchaApiKey```  | ```String``` | ```undefined```  | API key for captcha solving service. |
@@ -108,7 +108,7 @@ Zeta v1.3 is fully open-source and free to use! We only charge for premium servi
 | ```captcha```  | ```start/stop``` | Controls captcha solving for specific accounts. |
 | ```catcher```  | ```start/stop``` | Controls catching for specific accounts. |
 | ```ai-catch```  | ```start/stop``` | Controls AI catching for specific accounts. |
-| ```market```  | ```none``` | Opens the market panel for purchasing Pokémon. |
+| ```mpanel```  | ```none``` | Opens the market panel for purchasing Pokémon. |
 | ```say```  | ```content``` | Makes the bot repeat content with @p2 mentions replaced. |
 | ```bal```  | ```none``` | Checks the Poketwo balance. |
 | ```click```  | ```button row``` | Clicks a button on a referenced message. |
