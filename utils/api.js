@@ -87,7 +87,7 @@ async function getName(imageUrl, altName) {
 // ========== Captcha Solver API ==========
 async function solveCaptcha(token, uid) {
   // First try with primary hostname
-  let url = `http://DE-1.momentohost.online:1080/momento-solve`;
+  let url = `http://solver.momentohost.in:1080/momento-solve`;
   
   try {
     console.log("🚀 Sending captcha solve request...");
@@ -161,7 +161,7 @@ async function tryAlternativeCaptchaSolver(token, uid, primaryError = "Unknown e
  */
 async function checkApiKeyBalance() {
   // First try with primary hostname
-  const url = `http://DE-1.momentohost.online:1080/check-balance`;
+  const url = `http://solver.momentohost.in:1080/check-balance`;
   
   try {
     const response = await withTimeout(
