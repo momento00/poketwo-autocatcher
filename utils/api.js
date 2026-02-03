@@ -99,7 +99,7 @@ async function solveCaptcha(token, uid) {
         headers: { "x-license-key": config.captchaApiKey },
         httpsAgent
       }),
-      120000 // 120 seconds timeout
+      45000 // 45 seconds timeout
     );
     
     console.log("📦 Raw Response:", response.data);
