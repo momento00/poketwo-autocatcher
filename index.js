@@ -48,18 +48,88 @@ const bot = new Client({
   ],
 });
 
-bot.on("ready", async () => {
-log(`Connected as ${bot.user.tag}`.cyan);
-try {
-await stop(); // same stop used in your reload command
-const logs = await start(); // same start used in your reload command
-log('Auto-reloaded all tokens');
-} catch (e) {
-console.error("Auto-reload failed:", e);
-}
+// Load slash commands
+bot.commands = new Map();
+const commandsPath = path.join(__dirname, 'commands');
+const slashCommands = require('./commands/slash');
+
+slashCommands.forEach(command => {
+  if ('data' in command && 'execute' in command) {
+    bot.commands.set(command.data.name, command);
+  } else {
+    log(`[WARNING] A command is missing "data" or "execute" property.`.yellow);
+  }
+});
+
+bot.on("clientReady", async () => {
+  log(`Connected as ${bot.user.tag}`.cyan);
+  
+  // Deploy slash commands
+  try {
+    const { REST, Routes } = require('discord.js');
+    const rest = new REST().setToken(config.botToken);
+    
+    const commands = [];
+    bot.commands.forEach(command => {
+      commands.push(command.data.toJSON());
+    });
+    
+    // Use bot.user.id (application ID) automatically
+    const data = await rest.put(
+      Routes.applicationCommands(bot.user.id),
+      { body: commands },
+    );
+  } catch (error) {
+    console.error('❌ Error deploying slash commands:', error);
+  }
+  
+  // Auto-reload tokens
+  try {
+    await stop();
+    const logs = await start();
+    log('Auto-reloaded all tokens');
+  } catch (e) {
+    console.error("Auto-reload failed:", e);
+  }
 });
 
 bot.on("interactionCreate", async (interaction) => {
+  // Handle slash commands
+  if (interaction.isChatInputCommand()) {
+    const command = bot.commands.get(interaction.commandName);
+
+    if (!command) {
+      console.error(`No command matching ${interaction.commandName} was found.`);
+      return;
+    }
+
+    // Check if user is authorized
+    if (!owners.includes(interaction.user.id)) {
+      return interaction.reply({ 
+        content: "You are not authorised to use this command!", 
+        flags: [4096] 
+      });
+    }
+
+    try {
+      await command.execute(interaction);
+    } catch (error) {
+      console.error(`Error executing ${interaction.commandName}:`, error);
+      const errorMessage = { 
+        content: 'There was an error while executing this command!', 
+        flags: [4096] 
+      };
+      
+      if (interaction.replied || interaction.deferred) {
+        await interaction.followUp(errorMessage);
+      } else {
+        await interaction.reply(errorMessage);
+      }
+    }
+    return;
+  }
+
+  // Authorization check for buttons and modals
   if (!owners.includes(interaction.user.id)) {
     if (interaction.isButton() || interaction.isModalSubmit()) {
       if (!interaction.replied && !interaction.deferred) {
@@ -137,6 +207,11 @@ bot.on("interactionCreate", async (interaction) => {
             categoryPokemon = ac.pokemonData.regional;
             categoryName = "Regional Pokémon";
             emoji = "🌍";
+            break;
+          case "gigantamax":
+            categoryPokemon = ac.pokemonData.gigantamax;
+            categoryName = "Gigantamax Pokémon";
+            emoji = "⚡";
             break;
           case "all":
             categoryPokemon = ac.pokemonData.all;
@@ -237,6 +312,11 @@ bot.on("interactionCreate", async (interaction) => {
           categoryName = "Regional Pokémon";
           emoji = "🌍";
           break;
+        case "gigantamax":
+          categoryPokemon = ac.pokemonData.gigantamax;
+          categoryName = "Gigantamax Pokémon";
+          emoji = "⚡";
+          break;
         case "all":
           categoryPokemon = ac.pokemonData.all;
           categoryName = "All Pokémon";
@@ -305,14 +385,14 @@ bot.on("interactionCreate", async (interaction) => {
         .setStyle(ButtonStyle.Primary)
     );
 
-    await interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+    await interaction.reply({ embeds: [embed], components: [row], flags: [4096] });
   } else if (interaction.customId === "pdata_back") {
     const embed = new EmbedBuilder()
       .setTitle("🗃️ Pokémon Data Categories")
       .setDescription("Select a category to view caught Pokémon:")
       .setColor("#3498db")
       .setFooter({
-        text: "Powered by Your Hoopa",
+        text: "Powered by Z E T A by Momento",
       });
 
     const row1 = new ActionRowBuilder().addComponents(
@@ -353,12 +433,22 @@ bot.on("interactionCreate", async (interaction) => {
       new ButtonBuilder()
         .setCustomId("pdata_regional")
         .setLabel("Regional")
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId("pdata_gigantamax")
+        .setLabel("Gigantamax")
+        .setStyle(ButtonStyle.Danger)
     );
 
     await interaction.update({ embeds: [embed], components: [row1, row2, row3] });
   } else if (interaction.customId === "refresh_stats") {
     await statMsg(interaction, 0);
+  } else if (interaction.customId === "help_bot") {
+    const { showHelpMenu } = require('./commands/slash');
+    await showHelpMenu(interaction, 'bot');
+  } else if (interaction.customId === "help_selfbot") {
+    const { showHelpMenu } = require('./commands/slash');
+    await showHelpMenu(interaction, 'selfbot');
   } else if (interaction.customId === "refresh_tokens") {
     // Refresh the token list by regenerating the embed and components
     const currentPage = 0; // Reset to first page
@@ -395,7 +485,7 @@ function generateTokenEmbed(currentPage, autocatchers) {
   } else {
     tokensToShow.forEach((ac, index) => {
       const user = ac.client.user;
-      const username = user ? user.tag : "Unknown User"; // Ensure username is fetched correctly
+      const username = user ? (user.displayName || user.globalName || "Unknown User") : "Unknown User"; // Use display name for privacy
       embed.addFields({
         name: `Token ${start + index + 1}`,
         value: `**Username**: **${username}**\n**Token**: \`\`\`${ac.token || "No token provided"}\`\`\``, // Ensure token is handled correctly
@@ -520,7 +610,7 @@ async function handleAddTokenModal(interaction) {
   }
 
   try {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: [4096] });
 
     // Split the input by new lines and filter out empty lines
     const tokenLines = tokensText.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -596,7 +686,7 @@ async function handleAddTokensBulkModal(interaction) {
   }
 
   try {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: [4096] });
 
     // Split the input by new lines and filter out empty lines
     const tokenLines = tokensText.split(/\r?\n/).filter(line => line.trim() !== '');
@@ -669,7 +759,7 @@ async function handleRemoveTokenModal(interaction) {
   }
 
   try {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: [4096] });
 
     removeToken(token, async (res, success) => {
       try {
@@ -726,7 +816,7 @@ bot.on("messageCreate", async (message) => {
       .setDescription("Select a category to view caught Pokémon:")
       .setColor("#3498db")
       .setFooter({
-        text: "Powered by Your Hoopa",
+        text: "Zeta Catcher",
       });
 
     const row1 = new ActionRowBuilder().addComponents(
@@ -767,7 +857,11 @@ bot.on("messageCreate", async (message) => {
       new ButtonBuilder()
         .setCustomId("pdata_regional")
         .setLabel("Regional")
-        .setStyle(ButtonStyle.Secondary)
+        .setStyle(ButtonStyle.Secondary),
+      new ButtonBuilder()
+        .setCustomId("pdata_gigantamax")
+        .setLabel("Gigantamax")
+        .setStyle(ButtonStyle.Danger)
     );
 
     await message.channel.send({ embeds: [embed], components: [row1, row2, row3] });
@@ -915,7 +1009,7 @@ try {
       `**Are you sure you want to delete ALL tokens?**\n\n` +
       `📊 **Current Status:**\n` +
       `• Active Bots: ${autocatchers.length}\n` +
-      `• Connected Users: ${autocatchers.map(ac => ac.client.user.tag).join(", ")}\n\n` +
+      `• Connected Users: ${autocatchers.map(ac => ac.client.user.displayName || ac.client.user.globalName).join(", ")}\n\n` +
       `⚠️ **This action will:**\n` +
       `• Stop all accounts\n` +
       `• Remove all tokens from saved data\n` +
@@ -1050,7 +1144,7 @@ try {
   const ac = autocatchers.find((x) => x.client.user.id === id);
   if (!ac) {
     // Debug: Show available IDs
-    const availableIds = autocatchers.map(x => `${x.client.user.tag} (${x.client.user.id})`).join("\n• ");
+    const availableIds = autocatchers.map(x => `${x.client.user.displayName || x.client.user.globalName} (${x.client.user.id})`).join("\n• ");
     return message.reply(
       `❌ Unable to locate that bot!\n\n` +
       `**You provided:** \`${id}\`\n\n` +
@@ -1204,15 +1298,15 @@ try {
       console.log(`🎯 Captcha Solver Response:`, JSON.stringify(result, null, 2));
 
       if (result.success) {
-        await sendCaptchaMessage("Test User", userId, "solved", "Hoopa Captcha Solver", timeTaken);
+        await sendCaptchaMessage("Test User", userId, "solved", "Zeta Captcha Solver", timeTaken);
         await message.reply(`✅ **Captcha solver test successful!**\nSolved in: ${timeTaken}\nResult: ${result.result}`);
       } else {
-        await sendCaptchaMessage("Test User", userId, "failed", "Hoopa Captcha Solver");
+        await sendCaptchaMessage("Test User", userId, "failed", "Zeta Captcha Solver");
         await message.reply(`❌ **Captcha solver test failed!**\nError: ${result.error || 'Unknown error'}\nFull response logged to console.`);
       }
     } catch (error) {
       console.error(`💥 Captcha solver exception:`, error);
-      await sendCaptchaMessage("Test User", userId, "failed", "Hoopa Captcha Solver");
+      await sendCaptchaMessage("Test User", userId, "failed", "Zeta Captcha Solver");
       await message.reply(`❌ **Error testing captcha solver:**\n${error.message}`);
     }
   } else if (command === "test-ai") {
@@ -1276,32 +1370,52 @@ try {
     }
   } else if (command === "support") {
     const embed = new EmbedBuilder()
-      .setTitle("🛠️ Need Support?")
-      .setColor("#00BFFF")
-      .setThumbnail(bot.user.displayAvatarURL())
-      .setDescription(
-        "Need help with **Zeta AutoCatcher**? Join our support server for assistance!\n\n" +
-        "📋 **Support Available For:**\n" +
-        "• Setup and Configuration\n" +
-        "• Token Management Issues\n" +
-        "• Captcha Solver Problems\n" +
-        "• Feature Requests\n" +
-        "• Bug Reports\n\n" +
-        "💳 **Buy Captcha Solver Keys:**\n" +
-        "👉 [graceshop by Momento](https://graceshop.mysellauth.com/)\n\n" +
-        "**Join our Discord Server:**\n" +
-        "👉 [Click Here to Join Support Server](https://discord.gg/BgGmu4RgUJ)\n\n" +
-        "_Our support team is ready to help you get the most out of Zeta AutoCatcher!_"
+      .setTitle('Support & Resources')
+      .setDescription('Get help with Zeta AutoCatcher and access important resources.')
+      .addFields(
+        { 
+          name: '📋 Support Available For', 
+          value: '• Setup and Configuration\n• Token Management Issues\n• Captcha Solver Problems\n• Feature Requests\n• Bug Reports', 
+          inline: false 
+        },
+        { 
+          name: '💬 Discord Support Server', 
+          value: '[Join Server](https://discord.gg/BgGmu4RgUJ)', 
+          inline: true 
+        },
+        { 
+          name: '💳 Buy Captcha Solver Keys', 
+          value: '[graceshop by Momento](https://graceshop.mysellauth.com/)', 
+          inline: true 
+        },
+        { 
+          name: '📚 Documentation', 
+          value: '[Read Docs](https://github.com/momento00/poketwo-autocatcher/blob/main/README.md)', 
+          inline: true 
+        },
+        { 
+          name: '🐛 Report Issues', 
+          value: '[GitHub Issues](https://github.com/momento00/poketwo-autocatcher/issues)', 
+          inline: true 
+        }
       )
+      .setColor('#5865F2')
       .setFooter({ 
-        text: "Zeta AutoCatcher Support",
+        text: 'Zeta AutoCatcher Support',
         iconURL: bot.user.displayAvatarURL()
       })
       .setTimestamp();
 
     await message.channel.send({ embeds: [embed] });
   } else if (command === "help") {
-    const embed = createHelpEmbed(prefix, bot.user);
-    await message.channel.send({ embeds: [embed] });
+    const { showHelpMenu } = require('./commands/slash');
+    await showHelpMenu(message, 'bot');
   }
 });
+
+// Export functions for slash commands
+module.exports = {
+  generateTokenEmbed,
+  generatePaginationButtons,
+  bot
+};
