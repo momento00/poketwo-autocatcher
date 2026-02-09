@@ -191,6 +191,7 @@ async function addToken(token, callback) {
 
 async function statMsg(message, page = 0) {
   const bot = message.client;
+  const isInteraction = !message.author; // Slash commands don't have .author
 
   if (autocatchers.length === 0) {
     const embed = new EmbedBuilder()
@@ -217,10 +218,14 @@ async function statMsg(message, page = 0) {
         .setStyle(ButtonStyle.Secondary)
     );
 
-    if (message.author) {
-      await message.channel.send({ embeds: [embed], components: [row2] });
+    if (isInteraction) {
+      if (message.deferred || message.replied) {
+        await message.editReply({ embeds: [embed], components: [row2] });
+      } else {
+        await message.reply({ embeds: [embed], components: [row2] });
+      }
     } else {
-      await message.update({ embeds: [embed], components: [row2] });
+      await message.channel.send({ embeds: [embed], components: [row2] });
     }
     return;
   }
@@ -307,10 +312,14 @@ async function statMsg(message, page = 0) {
       .setStyle(ButtonStyle.Danger)
   );
 
-  if (message.author) {
-    await message.channel.send({ embeds: [embed], components: [row1, row2] });
+  if (isInteraction) {
+    if (message.deferred || message.replied) {
+      await message.editReply({ embeds: [embed], components: [row1, row2] });
+    } else {
+      await message.reply({ embeds: [embed], components: [row1, row2] });
+    }
   } else {
-    await message.update({ embeds: [embed], components: [row1, row2] });
+    await message.channel.send({ embeds: [embed], components: [row1, row2] });
   }
 }
 
