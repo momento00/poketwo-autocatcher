@@ -28,8 +28,9 @@ async function showMarketPanel(message, autocatchers) {
       .setValue(`account_${index}`);
   }).slice(0, 25);
 
+  const userId = message.author ? message.author.id : message.user.id;
   const accountSelect = new StringSelectMenuBuilder()
-    .setCustomId(`market_account_select_${message.author.id}`)
+    .setCustomId(`market_account_select_${userId}`)
     .setPlaceholder("Select an account for market operations...")
     .addOptions(accountOptions);
 
@@ -52,11 +53,11 @@ async function handleAccountSelection(interaction, autocatchers) {
   const selectedAc = autocatchers[accountIndex];
 
   if (!selectedAc || !selectedAc.client.user) {
-    return interaction.reply({ content: "❌ Selected account is no longer available!", ephemeral: true });
+    return interaction.reply({ content: "❌ Selected account is no longer available!", flags: [4096] });
   }
 
   if (!selectedAc.client.ws || selectedAc.client.ws.status !== 0) {
-    return interaction.reply({ content: "❌ Selected account is offline!", ephemeral: true });
+    return interaction.reply({ content: "❌ Selected account is offline!", flags: [4096] });
   }
 
   // ✅ FIXED: Find ALL guilds with PokéTwo (removed member count restriction)
@@ -83,7 +84,7 @@ async function handleAccountSelection(interaction, autocatchers) {
   if (validGuilds.length === 0) {
     return interaction.reply({ 
       content: "❌ No servers found with PokéTwo bot!\n\n**Tip:** Make sure the account is in servers where PokéTwo is present.", 
-      ephemeral: true 
+      flags: [4096] 
     });
   }
 
@@ -146,7 +147,7 @@ async function handleMarketPurchase(interaction, autocatchers) {
   const userId = parts[5];
 
   if (interaction.user.id !== userId) {
-    return interaction.reply({ content: "❌ You cannot use this modal!", ephemeral: true });
+    return interaction.reply({ content: "❌ You cannot use this modal!", flags: [4096] });
   }
 
   const marketId = interaction.fields.getTextInputValue("marketId");
@@ -154,10 +155,10 @@ async function handleMarketPurchase(interaction, autocatchers) {
   const selectedGuild = selectedAc.client.guilds.cache.get(guildId);
 
   if (!selectedAc || !selectedGuild) {
-    return interaction.reply({ content: "❌ Account or server is no longer available!", ephemeral: true });
+    return interaction.reply({ content: "❌ Account or server is no longer available!", flags: [4096] });
   }
 
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: [4096] });
 
   try {
     // Find suitable channel
@@ -197,12 +198,13 @@ async function handleMarketPurchase(interaction, autocatchers) {
     collector.on("collect", async (m) => {
       if (m.content.includes("you want to buy")) {
         try {
-          await m.clickButton();
+          // Click the confirm button (first button in first row)
+          await m.clickButton({ Y: 0, X: 0 });
           let price = m.content.split("`").reverse()[1];
           
           await interaction.followUp({
             content: `✅ **Purchase Successful!**\n📋 Listing: ${marketId}\n💰 Price: ${price} coins`,
-            ephemeral: true
+            flags: [4096]
           });
           
           collector.stop();
@@ -211,19 +213,19 @@ async function handleMarketPurchase(interaction, autocatchers) {
           
           await interaction.followUp({
             content: `⚠️ Purchase command sent but failed to auto-confirm. Please manually confirm in ${channel.name}`,
-            ephemeral: true
+            flags: [4096]
           });
           
           collector.stop();
         }
       } else if (m.content.includes("can't purchase your own")) {
-        await interaction.followUp({ content: "❌ You can't purchase your own listing!", ephemeral: true });
+        await interaction.followUp({ content: "❌ You can't purchase your own listing!", flags: [4096] });
         collector.stop();
       } else if (m.content.includes("have enough Pokécoins")) {
-        await interaction.followUp({ content: "❌ Insufficient funds!", ephemeral: true });
+        await interaction.followUp({ content: "❌ Insufficient funds!", flags: [4096] });
         collector.stop();
       } else if (m.content.includes("find that listing!")) {
-        await interaction.followUp({ content: "❌ Could not find that listing!", ephemeral: true });
+        await interaction.followUp({ content: "❌ Could not find that listing!", flags: [4096] });
         collector.stop();
       }
     });
@@ -232,7 +234,7 @@ async function handleMarketPurchase(interaction, autocatchers) {
       if (collected.size === 0) {
         await interaction.followUp({ 
           content: "⚠️ No response from PokéTwo. Please check the channel manually.", 
-          ephemeral: true 
+          flags: [4096] 
         });
       }
     });
