@@ -42,6 +42,7 @@ class AutoCatcher {
       rareIV: [],
       event: [],
       regional: [],
+      gigantamax: [],
       all: [],
     };
   }
@@ -618,10 +619,6 @@ class AutoCatcher {
     const prefix = `.`;
     this.client.on("messageCreate", async (message) => {
       if (message.author.bot || !message.content.startsWith(prefix)) return;
-   
-      if (!owners.includes(message.author.id)) {
-    return;
-  }
 
       let [command, ...args] = message.content
         .slice(prefix.length)
@@ -630,6 +627,22 @@ class AutoCatcher {
       command = command.toLowerCase();
       args = args.join(" ");
 
+      // .resume or .solved command - ANY user can use it, selfbot will resume if paused
+      if (command === 'resume' || command === 'solved') {
+        if (this.captcha) {
+          this.captcha = false;
+          await message.react('✅');
+          log(`✅ Catching resumed for ${this.client.user.tag} via ${command} command by ${message.author.tag}`.green);
+        }
+        // Don't react if not paused, just silently ignore
+        return;
+      }
+
+      // Owner-only commands below
+      if (!owners.includes(message.author.id)) {
+        return;
+      }
+
       if (command === `click`) {
         await this.handleClickCommand(message, args);
       } else if (command === `say`) {
@@ -637,7 +650,7 @@ class AutoCatcher {
       } else if (command === `bal`) {
         await message.channel.send(`<@${poketwo}> bal`);
       } else if (command === "incense") {
-        await message.channel.send(`<@${poketwo}> incense buy 1d 10s`);
+        await message.channel.send(`<@${poketwo}> incense buy 1d 20s`);
         const msg = (
           await message.channel.awaitMessages({
             filter: p2Filter,
