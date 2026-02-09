@@ -1,4 +1,4 @@
-<meta name="description" content="Zeta v1.3 is an advanced open-source Poketwo autocatcher with AI-powered catching, captcha solving, and comprehensive automation features. Designed for efficiency and ease of use."/>
+<meta name="description" content="Zeta v1.4 is an advanced open-source Poketwo autocatcher with AI-powered catching, captcha solving, and comprehensive automation features. Designed for efficiency and ease of use."/>
 
 <meta name="keywords" content="Zeta, Poketwo, Poketwo AutoCatcher, Poketwo Bot, poketwo selfbot, poketwo discord bot, poketwo bot, autocatcher, catch pokemon, poketwo-autocatcher, poketwo auto catcher, poketwo helper bot, poketwo rich, poketwo coins, poketwo shiny, online, how-to-get-rich-in-poketwo, momento, Zeta, Poketwo, latest, working, 2026"/>
 
@@ -6,7 +6,7 @@
 
 <meta name="url" content="https://github.com/momento00/poketwo-autocatcher" />
 
-<meta name="og:title" content="Zeta v1.3; Pokétwo Autocatcher"/>
+<meta name="og:title" content="Zeta v1.4; Pokétwo Autocatcher"/>
 
 <meta name="google-site-verification" content="open source best" />
 
@@ -22,11 +22,11 @@
 
 <p align="center">
   <a href="https://github.com/momento00/poketwo-autocatcher"><img width="200px" src="https://cdn.discordapp.com/attachments/1462107266659516610/1466465747701207080/mainlogo.png?ex=697cd827&is=697b86a7&hm=fdca5850c29d20e18d02892b9cdf87341d5fb0fb9e930d39f5c42e75199db552" alt="Zeta Logo"></a>
-  <h1 align="center">Zeta v1.3</h1>
+  <h1 align="center">Zeta v1.4</h1>
 </p>
 
 <p align="center">
-Zeta v1.3 - Advanced Pokétwo Autocatcher with AI Integration & Captcha Solving
+Zeta v1.4 - Advanced Pokétwo Autocatcher with AI Integration & Captcha Solving
 </p>
 
 <p align="center">
@@ -48,7 +48,7 @@ Zeta v1.3 - Advanced Pokétwo Autocatcher with AI Integration & Captcha Solving
 
 <h2>About</h2>
 
-Zeta v1.3 is an advanced open-source Pokétwo autocatcher featuring AI-powered catching, automated captcha solving, and comprehensive automation features. Fully customizable and designed for efficiency and ease of use. Runnable on multiple accounts simultaneously with advanced tracking and logging capabilities.
+Zeta v1.4 is an advanced open-source Pokétwo autocatcher featuring AI-powered catching, automated captcha solving, and comprehensive automation features. Fully customizable and designed for efficiency and ease of use. Runnable on multiple accounts simultaneously with advanced tracking and logging capabilities. Now includes global slash commands for seamless control.
 
 <h2 align="left">Support</h2>
 
@@ -60,7 +60,8 @@ If you need any support, please join [our Discord server](https://discord.gg/BgG
 * [x] Hint (Default) + AI-Powered Catching (Paid) </br>
 * [x] Automated Captcha Solving </br>
 * [x] Can catch EVERY pokemon (All gen + New forms) </br>
-* [x] Interactive Commands </br>
+* [x] Global Slash Commands </br>
+* [x] Interactive Commands & Buttons </br>
 * [x] Useful Webhook Logging </br>
 * [x] Comprehensive Stats Tracking </br>
 * [x] Level Detection & IV Scoring </br>
@@ -71,10 +72,12 @@ If you need any support, please join [our Discord server](https://discord.gg/BgG
 * [x] Server Blacklisting </br>
 * [x] Market Automation </br>
 * [x] Quest Completion Tracking </br>
+* [x] Mass Token Management </br>
+* [x] Bulk Shards & Incense Purchasing </br>
 
 <h2 align="left">Pricing</h2>
 
-Zeta v1.3 is fully open-source and free to use! We only charge for Fully Automatic Captcha Solving and AI Catching where Free is not Currently Possible, It is just an Optional thing you can add on this Zeta Catcher:
+Zeta v1.4 is fully open-source and free to use! We only charge for Fully Automatic Captcha Solving and AI Catching where Free is not Currently Possible, It is just an Optional thing you can add on this Zeta Catcher:
 * **Captcha Solves**: Available at [GraceShop](https://graceshop.mysellauth.com)
     - Get Free 100 Solves by giving a Star to our Zeta ( Create A ticket in Support Server to claim)
 * **AI Catching**: Available by contacting `momento.de` (99.7%+ accuracy including new forms)
@@ -97,23 +100,28 @@ Zeta v1.3 is fully open-source and free to use! We only charge for Fully Automat
 | ```waitAfterSpawn```  | ```Number``` | ```1500```  | Time to wait after spawn (in ms). |
 | ```blacklistedServers```  | ```Array``` | ```["716390832034414685"]```  | Server IDs to exclude from catching. |
 
-<h2 align="left">Commands</h2>
+<h2 align="left">Slash Commands</h2>
 
-| Name  | Options | Description |
+All commands are global slash commands that work in DMs and servers. Use `/` to access them.
+
+| Command  | Options | Description |
 | ------------- | ------------- | ------------- |
-| ```help```  | ```none```  | Gives a list of these available commands. |
-| ```add-token```  | ```token``` | Adds a new token to the autocatcher. |
-| ```remove-token```  | ```token``` | Removes a token from the autocatcher. |
-| ```stats```  | ```none``` | Displays comprehensive statistics for all accounts. |
-| ```captcha```  | ```start/stop``` | Controls captcha solving for specific accounts. |
-| ```catcher```  | ```start/stop``` | Controls catching for specific accounts. |
-| ```ai-catch```  | ```start/stop``` | Controls AI catching for specific accounts. |
-| ```mpanel```  | ```none``` | Opens the market panel for purchasing Pokémon. |
-| ```say```  | ```content``` | Makes the bot repeat content with @p2 mentions replaced. |
-| ```bal```  | ```none``` | Checks the Poketwo balance. |
-| ```click```  | ```button row``` | Clicks a button on a referenced message. |
-| ```mbuy```  | ```market_id``` | Buys a Pokémon from the market. |
-| ```incense```  | ```none``` | Buys and activates incense. |
+| ```/help```  | ```none```  | Display all available commands with interactive menu. |
+| ```/ping```  | ```none```  | Check bot latency and response time. |
+| ```/stats```  | ```none``` | View comprehensive statistics for all autocatcher accounts. |
+| ```/pokemon```  | ```none``` | View caught Pokémon by category (Legendary, Shiny, Mythical, Ultra Beast, Gigantamax, etc.). |
+| ```/token```  | ```action, tokens``` | Add, remove, or check tokens (supports mass operations up to 25 tokens at once). |
+| ```/viewtokens```  | ```none``` | View all currently connected tokens with pagination. |
+| ```/reload```  | ```none``` | Reload all tokens and restart all autocatchers. |
+| ```/captcha```  | ```action, id``` | Control automatic captcha solving (start/stop) globally or per account. |
+| ```/mpanel```  | ```none``` | Open the interactive market panel for purchasing Pokémon. |
+| ```/shards```  | ```amount``` | Buy shards across all active autocatchers simultaneously. |
+| ```/incense```  | ```duration, interval``` | Buy incense across all autocatchers simultaneously (1d/3h/1h with 10s/20s/30s intervals). |
+| ```/solver```  | ```token, userid``` | Test captcha solver with specific token and user ID. |
+| ```/balance```  | ```none``` | Check captcha solver API key balance and usage. |
+| ```/setprefix```  | ```prefix``` | Change the bot command prefix. |
+| ```/owner```  | ```action, id``` | Add or remove bot owners by user ID. |
+| ```/support```  | ```none``` | Get support information, links, and resources. |
 
 ## Installation
 
@@ -156,13 +164,20 @@ node index.js
 
 ### Adding Autocatcher Tokens
 
-- **Method 1 (Recommended)**: Use the in-app token manager
+- **Method 1 (Recommended)**: Use the slash command `/token`
   1. Start the bot
-  2. Run the `!stats` command
-  3. Click the "Add Token" button to add new tokens (Support Mass adding)
-  4. Use the "Remove Token" button to remove tokens
+  2. Run `/token action:add tokens:<your_tokens>`
+  3. Supports mass adding up to 25 tokens at once
+  4. Accepts formats: standalone token or `mail:pass:token`
+  5. Use `/token action:remove` to remove tokens
+  6. Use `/token action:check` to verify token status
 
-- **Method 2**: Edit the `data/tokens.json` file directly
+- **Method 2**: Use the stats button interface
+  1. Run the `/stats` command
+  2. Click the "Add Token" button to add new tokens
+  3. Use the "Remove Token" button to remove tokens
+
+- **Method 3**: Edit the `data/tokens.json` file directly
 
 ```json
 [
@@ -173,10 +188,12 @@ node index.js
 
 ### Important
 
+* All slash commands are global and work in both DMs and servers.
 * For the best experience, ensure your Discord account has proper permissions in the channels where catching occurs.
 * Captcha solving requires a valid API key you can buy from [GraceShop](https://graceshop.mysellauth.com).
 * AI catching requires a license key obtained by contacting `momento.de`.
 * Make sure to add your Discord User ID to the `owners` array in config.js to control the bot commands.
+* Use `/token` command for mass token management (up to 25 tokens at once).
 
 ## Contributing
 
