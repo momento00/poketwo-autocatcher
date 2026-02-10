@@ -76,25 +76,14 @@ bot.on("clientReady", async () => {
   try {
     bot.user.setPresence({
       activities: [{ 
-        name: 'Zeta v1.4', 
+        name: 'Zeta v1.4 by momento.de', 
         state: `Journey to Hunt the Black Rayquaza ⚫!!`, 
         type: 2
       }],
       status: 'online',
     });
   } catch (error) {
-    // Silent fail
   }
-  
-  // Note: Bio must be set manually in Discord Developer Portal
-  // 1. Go to https://discord.com/developers/applications
-  // 2. Select your bot application -> Bot section
-  // 3. Set "About Me" (Bio) to:
-  //    **Zeta Autocatcher Journey to Hunt the Black Rayquaza ⚫!!**
-  //    Made with ❤️ by momento.de
-  // 4. Pronouns: Set to "Zeta" in bot's user settings
-  
-  // Deploy slash commands
   try {
     const { REST, Routes } = require('discord.js');
     const rest = new REST().setToken(config.botToken);
