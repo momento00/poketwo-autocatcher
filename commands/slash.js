@@ -384,46 +384,100 @@ const tokenCommand = {
         ))
     .addStringOption(option =>
       option.setName('tokens')
-        .setDescription('Token(s) - one per line (max 25). Formats: standalone or mail:pass:token')
-        .setRequired(false))
+        .setDescription('Token(s) separated by newline, comma, or space (max 25). Formats: standalone or mail:pass:token')
+        .setRequired(true))
     .setContexts(0, 1, 2)
     .setIntegrationTypes(0, 1),
   
   async execute(interaction) {
-    const { addToken, removeToken, autocatchers } = require('../functions/functions');
-    const action = interaction.options.getString('action');
-    const tokensInput = interaction.options.getString('tokens');
+    try {
+      // Defer reply IMMEDIATELY to avoid timeout (must be within 3 seconds)
+      if (!interaction.deferred && !interaction.replied) {
+        await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+      }
+      
+      const { addToken, removeToken, autocatchers } = require('../functions/functions');
+      const action = interaction.options.getString('action');
+      const tokensInput = interaction.options.getString('tokens');
+
+    // Helper function to parse tokens from input
+    function parseTokens(input) {
+      if (!input) return [];
+      
+      // First, split by newlines
+      let lines = input.split(/\r?\n/).map(line => line.trim()).filter(line => line !== '');
+      
+      // If we have multiple lines, return them as-is
+      if (lines.length > 1) {
+        return lines;
+      }
+      
+      // If only one line, check if it contains multiple tokens separated by comma or space
+      if (lines.length === 1) {
+        const singleLine = lines[0];
+        
+        // Try splitting by comma first
+        if (singleLine.includes(',')) {
+          return singleLine.split(',').map(t => t.trim()).filter(t => t !== '');
+        }
+        
+        // Try splitting by space - but be careful with mail:pass:token format
+        // Count colons to determine if it's a single token or multiple
+        const colonCount = (singleLine.match(/:/g) || []).length;
+        
+        // If there are 2 colons, it's likely mail:pass:token format (single token)
+        if (colonCount === 2) {
+          return [singleLine];
+        }
+        
+        // If there are more than 2 colons or spaces, try splitting by space
+        if (singleLine.includes(' ')) {
+          const spaceParts = singleLine.split(/\s+/).map(t => t.trim()).filter(t => t !== '');
+          // Only split if we have multiple valid-looking tokens
+          if (spaceParts.length > 1 && spaceParts.every(p => p.length > 20)) {
+            return spaceParts;
+          }
+        }
+        
+        // Otherwise, treat as single token
+        return [singleLine];
+      }
+      
+      return lines;
+    }
+
+    // Helper function to extract token from various formats
+    function extractToken(line) {
+      if (!line) return null;
+      
+      line = line.trim();
+      
+      // Check for mail:pass:token format
+      if (line.includes(':')) {
+        const parts = line.split(':');
+        if (parts.length >= 3) {
+          // mail:pass:token format - token is the third part
+          return parts[2].trim();
+        } else if (parts.length === 1) {
+          // Just a token with no colons somehow split
+          return parts[0].trim();
+        }
+      }
+      
+      // Standalone token
+      return line.trim();
+    }
 
     if (action === 'check') {
-      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-      if (!tokensInput) {
-        // Show current active tokens count
-        const embed = new EmbedBuilder()
-          .setTitle('Active Accounts Overview')
-          .setDescription(`Currently managing **${autocatchers.length}** active account(s)`)
-          .setColor('#5865F2')
-          .setTimestamp();
-
-        if (autocatchers.length > 0) {
-          const tokenList = autocatchers.map((ac, index) => 
-            `\`${index + 1}.\` ${ac.client.user.displayName || ac.client.user.globalName} • \`${ac.client.user.id}\``
-          ).join('\n');
-          embed.addFields({ name: 'Connected Accounts', value: tokenList });
-        }
-
-        return interaction.editReply({ embeds: [embed] });
-      }
-
-      // Check provided tokens
-      const tokenLines = tokensInput.split(/\r?\n/).filter(line => line.trim() !== '');
+      // Parse tokens from input
+      const tokenLines = parseTokens(tokensInput);
 
       if (tokenLines.length > 25) {
         const embed = new EmbedBuilder()
           .setTitle('Limit Exceeded')
           .setDescription('You can only check up to 25 accounts at a time.')
           .addFields(
-            { name: 'Maximum', value: '25 accountss', inline: true },
+            { name: 'Maximum', value: '25 accounts', inline: true },
             { name: 'Provided', value: `${tokenLines.length} tokens`, inline: true }
           )
           .setColor('#ED4245')
@@ -435,24 +489,13 @@ const tokenCommand = {
       const { Client } = require('discord.js-selfbot-v13');
 
       for (const line of tokenLines) {
-        let token = null;
-        
-        // Extract token from different formats
-        if (line.includes(':')) {
-          const parts = line.split(':');
-          if (parts.length >= 3) {
-            token = parts[2];
-          }
-        } else {
-          token = line.trim();
-        }
+        const token = extractToken(line);
 
-        if (!token) {
-          results.push(`\`...\` Invalid format`);
+        if (!token || token.length < 50) {
+          results.push(`\`...\` Invalid format or too short`);
           continue;
         }
 
-        token = token.trim();
         const tokenLast10 = token.slice(-10);
 
         try {
@@ -523,19 +566,8 @@ const tokenCommand = {
       return interaction.editReply({ embeds: [embed] });
     }
 
-    if (!tokensInput) {
-      const embed = new EmbedBuilder()
-        .setTitle('Token Management')
-        .setDescription('Please provide token(s) in the `tokens` field.')
-        .setColor('#ED4245')
-        .setTimestamp();
-      return interaction.reply({ embeds: [embed], flags: MessageFlags.Ephemeral });
-    }
-
-    await interaction.deferReply({ flags: MessageFlags.Ephemeral });
-
-    // Split tokens by newline and filter empty lines
-    const tokenLines = tokensInput.split(/\r?\n/).filter(line => line.trim() !== '');
+    // Parse tokens from input
+    const tokenLines = parseTokens(tokensInput);
 
     // Check max limit
     if (tokenLines.length > 25) {
@@ -543,7 +575,7 @@ const tokenCommand = {
         .setTitle('Limit Exceeded')
         .setDescription('You can only process up to 25 accounts at a time.')
         .addFields(
-          { name: 'Maximum', value: '25 accountss', inline: true },
+          { name: 'Maximum', value: '25 accounts', inline: true },
           { name: 'Provided', value: `${tokenLines.length} tokens`, inline: true }
         )
         .setColor('#ED4245')
@@ -559,21 +591,9 @@ const tokenCommand = {
       for (const line of tokenLines) {
         totalCount++;
         
-        // Extract token from different formats
-        let token = null;
+        const token = extractToken(line);
         
-        if (line.includes(':')) {
-          const parts = line.split(':');
-          if (parts.length >= 3) {
-            token = parts[2]; // mail:pass:token format
-          }
-        } else {
-          token = line.trim(); // Standalone token
-        }
-        
-        if (token) {
-          token = token.trim();
-          
+        if (token && token.length >= 50) {
           await new Promise(resolve => {
             addToken(token, (res, success) => {
               if (success) {
@@ -582,7 +602,7 @@ const tokenCommand = {
                 const username = usernameMatch ? usernameMatch[1] : `Token ...${token.slice(-5)}`;
                 results.push(`\`✓\` ${username}`);
               } else {
-                results.push(`\`✗\` Token ...${token.slice(-5)}`);
+                results.push(`\`✗\` Token ...${token.slice(-5)} - ${res.substring(0, 30)}`);
               }
               resolve();
             });
@@ -591,7 +611,7 @@ const tokenCommand = {
           // Delay between tokens to avoid rate limits
           await new Promise(resolve => setTimeout(resolve, 500));
         } else {
-          results.push(`\`✗\` Invalid format`);
+          results.push(`\`✗\` Invalid format or too short`);
         }
       }
 
@@ -612,28 +632,16 @@ const tokenCommand = {
       for (const line of tokenLines) {
         totalCount++;
         
-        // Extract token from different formats
-        let token = null;
+        const token = extractToken(line);
         
-        if (line.includes(':')) {
-          const parts = line.split(':');
-          if (parts.length >= 3) {
-            token = parts[2];
-          }
-        } else {
-          token = line.trim();
-        }
-        
-        if (token) {
-          token = token.trim();
-          
+        if (token && token.length >= 50) {
           await new Promise(resolve => {
             removeToken(token, (res, success) => {
               if (success) {
                 successCount++;
                 results.push(`\`✓\` Removed ...${token.slice(-5)}`);
               } else {
-                results.push(`\`✗\` Token ...${token.slice(-5)}`);
+                results.push(`\`✗\` Token ...${token.slice(-5)} - Not found`);
               }
               resolve();
             });
@@ -641,7 +649,7 @@ const tokenCommand = {
           
           await new Promise(resolve => setTimeout(resolve, 500));
         } else {
-          results.push(`\`✗\` Invalid format`);
+          results.push(`\`✗\` Invalid format or too short`);
         }
       }
 
@@ -653,6 +661,27 @@ const tokenCommand = {
         .setTimestamp();
       
       await interaction.editReply({ embeds: [embed] });
+    }
+    } catch (error) {
+      console.error('Error in token command:', error);
+      
+      // Try to send error message if possible
+      try {
+        const errorEmbed = new EmbedBuilder()
+          .setTitle('Command Error')
+          .setDescription('An error occurred while processing your request.')
+          .addFields({ name: 'Error', value: error.message || 'Unknown error' })
+          .setColor('#ED4245')
+          .setTimestamp();
+        
+        if (interaction.deferred || interaction.replied) {
+          await interaction.editReply({ embeds: [errorEmbed] });
+        } else {
+          await interaction.reply({ embeds: [errorEmbed], flags: MessageFlags.Ephemeral });
+        }
+      } catch (replyError) {
+        console.error('Could not send error message:', replyError);
+      }
     }
   },
 };
