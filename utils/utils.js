@@ -117,7 +117,6 @@ async function getGuilds(bot) {
   }
   if (!def) def = guildsWithMembers[0];
 
-  // Return array with guilds and the default guild (if found)
   return [guildsWithMembers, def];
 }
 function commatize(number) {
