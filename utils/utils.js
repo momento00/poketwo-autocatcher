@@ -76,7 +76,7 @@ function logHook(embeds) {
     url: config.logHook,
   });
   hook.send({
-    username: `Hoopa Logger`,
+    username: `Zeta Logger`,
     avatarURL: `https://cdn.discordapp.com/avatars/1231471729004646451/a_dd8d0d8528b1820f3e1d7e8298a4fd71.gif`,
     embeds: embeds,
   });
