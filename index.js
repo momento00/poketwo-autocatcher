@@ -1,6 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 require("colors");
+const axios = require("axios");
 const {
   Client,
   GatewayIntentBits,
@@ -63,6 +64,35 @@ slashCommands.forEach(command => {
 
 bot.on("clientReady", async () => {
   log(`Connected as ${bot.user.tag}`.cyan);
+  
+  try {
+    const avatarURL = 'https://cdn.discordapp.com/attachments/1445779972450160760/1470565024094228533/Gemini_Generated_Image_wyxe7bwyxe7bwyxe.png?ex=698bc1e7&is=698a7067&hm=6343912ad414411a6ce7be99569cd04d563f40a85ee7ee5800142d03952bdb8d';
+    const response = await axios.get(avatarURL, { responseType: 'arraybuffer' });
+    const avatarBuffer = Buffer.from(response.data, 'binary');
+    await bot.user.setAvatar(avatarBuffer);
+  } catch (error) {
+  }
+
+  try {
+    bot.user.setPresence({
+      activities: [{ 
+        name: 'Zeta v1.4', 
+        state: `Journey to Hunt the Black Rayquaza ⚫!!`, 
+        type: 2
+      }],
+      status: 'online',
+    });
+  } catch (error) {
+    // Silent fail
+  }
+  
+  // Note: Bio must be set manually in Discord Developer Portal
+  // 1. Go to https://discord.com/developers/applications
+  // 2. Select your bot application -> Bot section
+  // 3. Set "About Me" (Bio) to:
+  //    **Zeta Autocatcher Journey to Hunt the Black Rayquaza ⚫!!**
+  //    Made with ❤️ by momento.de
+  // 4. Pronouns: Set to "Zeta" in bot's user settings
   
   // Deploy slash commands
   try {
